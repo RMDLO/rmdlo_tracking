@@ -28,14 +28,12 @@ Perform the below commands in a terminal.
 ~$ rosdep update
 # Clone the ABB robot catkin workspace.
 ~$ git clone git@github.com:RMDLO/cdcpd_ws.git --recurse-submodules
-# Change to the root of the ABB catkin workspace.
-~$ cd cdcpd_ws/src
-# Use rosdep to install any missing dependencies.
-~/cdcpd_ws/src$ sudo rosdep install -r --from-paths cdcpd -y
+# Change to the root of the ABB catkin workspace, use rosdep to install missing dependencies.
+~$ cd cdcpd_ws/src && rosdep install -r --from-paths cdcpd -y && cd ..
 # Build the workspace (using catkin_tools).
-~/cdcpd_ws/src$ catkin build
+~/cdcpd_ws$ catkin build
 # Run all unit tests to ensure the workspace built properly.
-~/cdcpd_ws/src$ cd cdcpd && ./test_cdcpd.sh
+~/cdcpd_ws$ cd src/cdcpd && ./test_cdcpd.sh
 ```
 
 ## Running CDCPD on Bag Files
