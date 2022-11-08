@@ -1,0 +1,12 @@
+[submodule "src/cdcpd"]
+	path = src/cdcpd
+	url = git@github.com:RMDLO/cdcpd.git
+[submodule "src/arc_utilities"]
+	path = src/arc_utilities
+	url = git@github.com:UM-ARM-Lab/arc_utilities.git
+[submodule "src/pyrosmsg"]
+	path = src/pyrosmsg
+	url = git@github.com:UM-ARM-Lab/pyrosmsg.git
+[submodule "src/geometric_shapes"]
+	path = src/geometric_shapes
+	url = git@github.com:ros-planning/geometric_shapes.git
