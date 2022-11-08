@@ -56,4 +56,6 @@ Perform the below commands in a terminal.
 ~/cdcpd_ws$ cd src/cdcpd/demos && ./launch_demo1.sh
 ```
 
-See the [original CDCPD repository](https://github.com/RMDLO/cdcpd) for more information.
+After verifying this works, press `Ctrl+C` on the terminal session to end it, and then perform `killall -9 rosmaster` to stop the rosmaster from running in the background.
+
+See the [original CDCPD repository](https://github.com/RMDLO/cdcpd) and the [RMDLO CDCPD Installation Instructions](https://docs.google.com/document/d/1_r08YOtW4ldJITyKw-FgV_Jnz4U9KekI3ymMCv4ImIs/edit?usp=sharing) for more information.
