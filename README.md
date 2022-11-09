@@ -10,7 +10,7 @@ This workspace has been tested on ROS Noetic, which can be installed on an Ubunt
 sudo apt install ros-noetic-desktop-full
 ```
 
-More details on ROS installation are available [from the developers](http://wiki.ros.org/melodic/Installation/Ubuntu). Note: every terminal which uses ROS must source the ROS installation. A convenient way of auto-sourcing is to source the ROS installation in the `.bashrc` file:
+More details on ROS installation are available [from the developers](http://wiki.ros.org/melodic/Installation/Ubuntu). Note: every terminal which uses ROS must source the ROS installation. A convenient way of automatically sourcing is to source the ROS installation in the `.bashrc` file:
 
 ```bash
 echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
@@ -20,7 +20,7 @@ Using the RMDLO CDCPD ROS Workspace requires desktop [configuration of a GitHub 
 
 ## Installation of CDCPD ROS Workspace for the first time
 
-First, install any necessary dependencies deteiled in the [original CDCPD installation instructions](https://github.com/RMDLO/cdcpd). Namely, install dependencies using the instructions to modify and run the `cdcpd/install_scripts/install_dep.sh` script and obtain a Gurobi license.
+First, install any necessary dependencies detailed in the [original CDCPD installation instructions](https://github.com/RMDLO/cdcpd). Namely, install dependencies using the instructions to modify and run the `cdcpd/install_scripts/install_dep.sh` script and obtain a Gurobi license.
 
 Perform the below commands in a terminal.
 ```bash
