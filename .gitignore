@@ -5,3 +5,4 @@ logs/
 build/
 devel/
 *.bag
+tracking_ros/
