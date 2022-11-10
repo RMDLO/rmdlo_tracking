@@ -10,3 +10,6 @@
 [submodule "src/geometric_shapes"]
 	path = src/geometric_shapes
 	url = git@github.com:ros-planning/geometric_shapes.git
+[submodule "src/TrackDLO"]
+	path = src/TrackDLO
+	url = git@github.com:ambulocetus18/TrackDLO.git
