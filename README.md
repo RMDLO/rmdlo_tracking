@@ -1,6 +1,6 @@
-# CDCPD ROS Workspace
+# ROS Tracking Workspace
 
-ROS workspace for working with Constrained Deformable Coherent Point Drift.
+ROS workspace for working with Constrained Deformable Coherent Point Drift and TrackDLO.
 
 ## Preliminaries
 
@@ -27,13 +27,13 @@ Perform the below commands in a terminal.
 # First update the local rosdep database.
 ~$ rosdep update
 # Clone the ABB robot catkin workspace.
-~$ git clone git@github.com:RMDLO/cdcpd_ws.git --recurse-submodules
+~$ git clone git@github.com:RMDLO/rmdlo_tracking.git --recurse-submodules
 # Change to the root of the ABB catkin workspace, use rosdep to install missing dependencies.
-~$ cd cdcpd_ws/src && rosdep install -r --from-paths cdcpd -y && cd ..
+~$ cd rmdlo_tracking/src && rosdep install -r --from-paths cdcpd -y && cd ..
 # Build the workspace (using catkin_tools).
-~/cdcpd_ws$ catkin build
+~/rmdlo_tracking$ catkin build
 # Run all unit tests to ensure the workspace built properly.
-~/cdcpd_ws$ cd src/cdcpd && ./test_cdcpd.sh
+~/rmdlo_tracking$ cd src/cdcpd && ./test_cdcpd.sh
 ```
 
 ## Running CDCPD on Bag Files
@@ -42,18 +42,18 @@ Perform the below commands in a terminal.
 2. Perform the below commands in a terminal.
 ```bash
 # Extract the bagged data to the CDCPD directory.
-~$ cd ~/Downloads && unzip CDCPD_demo_data.zip -d ~/cdcpd_ws/src/cdcpd/demos/ && rm ~/Downloads/CDCPD_demo_data.zip && cd ..
+~$ cd ~/Downloads && unzip CDCPD_demo_data.zip -d ~/rmdlo_tracking/src/cdcpd/demos/ && rm ~/Downloads/CDCPD_demo_data.zip && cd ..
 # Decompress the extracted rosbag files.
-~$ cd ~/cdcpd_ws/src/cdcpd/demos && ./unpack_rosbags.sh && rm -rf rosbags_compressed
+~$ cd ~/rmdlo_tracking/src/cdcpd/demos && ./unpack_rosbags.sh && rm -rf rosbags_compressed
 ```
 3. Open a new terminal and launch
 `roscore`
 4. Open a new terminal and perform
 ```bash
 # First source the workspace
-~$ cd cdcpd_ws && source devel/setup.bash
+~$ cd rmdlo_tracking && source devel/setup.bash
 # Run the desired demo script, e.g.
-~/cdcpd_ws$ cd src/cdcpd/demos && ./launch_demo1.sh
+~/rmdlo_tracking$ cd src/cdcpd/demos && ./launch_demo1.sh
 ```
 
 After verifying this works, press `Ctrl+C` on the terminal session to end it, and then perform `killall -9 rosmaster` to stop the rosmaster from running in the background.
