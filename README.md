@@ -16,7 +16,7 @@ More details on ROS installation are available [from the developers](http://wiki
 echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 ```
 
-Using the RMDLO CDCPD ROS Workspace requires desktop [configuration of a GitHub SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
+Using the RMDLO Tracking ROS Workspace requires desktop [configuration of a GitHub SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
 
 ## Installation of RMDLO Tracking ROS Workspace for the first time
 
@@ -61,5 +61,25 @@ Additionally, test CDCPD to ensure it built properly.
 ```
 
 After verifying this works, press `Ctrl+C` on the terminal session to end it, and then perform `killall -9 rosmaster` to stop the rosmaster from running in the background.
+
+## Running TrackDLO on a Camera Image Stream
+
+1. Download the UM ARM Lab [rosbag files](https://www.dropbox.com/sh/4nsnxu4a2cxm8ko/AAC0-FsuWTHUB8FWrvp5BqR0a?dl=0).
+2. Perform the below commands one terminal.
+```bash
+# Source the RMDLO Tracking ROS Workspace
+~$ cd rmdlo_tracking && source devel/setup.bash
+# Lanch the camera, Rviz, and visualize the color image, mask, and tracking result (in 2D and 3D)
+~/rmdlo_tracking$ roslaunch TrackDLO realsense_node.launch
+```
+2. Open a second terminal and perform the below commands.
+```bash
+# Source the RMDLO Tracking ROS Workspace
+~$ cd rmdlo_tracking && source devel/setup.bash
+# Start the tracking algorithm and publish tracking results.
+~/rmdlo_tracking$ rosrun TrackDLO tracking_ros_dev.py
+```
+
+## Notes
 
 See the [original CDCPD repository](https://github.com/RMDLO/cdcpd), the [RMDLO CDCPD Installation Instructions](https://docs.google.com/document/d/1_r08YOtW4ldJITyKw-FgV_Jnz4U9KekI3ymMCv4ImIs/edit?usp=sharing), and the [TrackDLO README.md](https://github.com/RMDLO/TrackDLO) for more information.
