@@ -1,4 +1,4 @@
-# ROS Tracking Workspace
+# RMDLO Tracking ROS Workspace
 
 ROS workspace for working with Constrained Deformable Coherent Point Drift and TrackDLO.
 
@@ -18,7 +18,7 @@ echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 
 Using the RMDLO CDCPD ROS Workspace requires desktop [configuration of a GitHub SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
 
-## Installation of CDCPD ROS Workspace for the first time
+## Installation of RMDLO Tracking ROS Workspace for the first time
 
 First, install any necessary dependencies detailed in the [original CDCPD installation instructions](https://github.com/RMDLO/cdcpd). Namely, install dependencies using the instructions to modify and run the `cdcpd/install_scripts/install_dep.sh` script and obtain a Gurobi license.
 
@@ -32,6 +32,10 @@ Perform the below commands in a terminal.
 ~$ cd rmdlo_tracking/src && rosdep install -r --from-paths cdcpd -y && cd ..
 # Build the workspace (using catkin_tools).
 ~/rmdlo_tracking$ catkin build
+```
+
+Additionally, test CDCPD to ensure it built properly.
+```bash
 # Run all unit tests to ensure the workspace built properly.
 ~/rmdlo_tracking$ cd src/cdcpd && ./test_cdcpd.sh
 ```
@@ -58,4 +62,4 @@ Perform the below commands in a terminal.
 
 After verifying this works, press `Ctrl+C` on the terminal session to end it, and then perform `killall -9 rosmaster` to stop the rosmaster from running in the background.
 
-See the [original CDCPD repository](https://github.com/RMDLO/cdcpd) and the [RMDLO CDCPD Installation Instructions](https://docs.google.com/document/d/1_r08YOtW4ldJITyKw-FgV_Jnz4U9KekI3ymMCv4ImIs/edit?usp=sharing) for more information.
+See the [original CDCPD repository](https://github.com/RMDLO/cdcpd), the [RMDLO CDCPD Installation Instructions](https://docs.google.com/document/d/1_r08YOtW4ldJITyKw-FgV_Jnz4U9KekI3ymMCv4ImIs/edit?usp=sharing), and the [TrackDLO README.md](https://github.com/RMDLO/TrackDLO) for more information.
