@@ -12,4 +12,4 @@
 	url = git@github.com:ros-planning/geometric_shapes.git
 [submodule "src/TrackDLO"]
 	path = src/TrackDLO
-	url = git@github.com:ambulocetus18/TrackDLO.git
+	url = git@github.com:RMDLO/TrackDLO.git
