@@ -64,8 +64,7 @@ After verifying this works, press `Ctrl+C` on the terminal session to end it, an
 
 ## Running TrackDLO on a Camera Image Stream
 
-1. Download the UM ARM Lab [rosbag files](https://www.dropbox.com/sh/4nsnxu4a2cxm8ko/AAC0-FsuWTHUB8FWrvp5BqR0a?dl=0).
-2. Perform the below commands one terminal.
+1. Perform the below commands one terminal.
 ```bash
 # Source the RMDLO Tracking ROS Workspace
 ~$ cd rmdlo_tracking && source devel/setup.bash
