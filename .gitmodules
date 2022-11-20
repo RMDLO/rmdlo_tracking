@@ -13,3 +13,6 @@
 [submodule "src/TrackDLO"]
 	path = src/TrackDLO
 	url = git@github.com:RMDLO/TrackDLO.git
+[submodule "src/graph_rviz_plugin"]
+	path = src/graph_rviz_plugin
+	url = https://gitlab.com/InstitutMaupertuis/graph_rviz_plugin.git
