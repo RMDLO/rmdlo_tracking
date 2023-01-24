@@ -10,9 +10,9 @@
 [submodule "src/geometric_shapes"]
 	path = src/geometric_shapes
 	url = git@github.com:ros-planning/geometric_shapes.git
-[submodule "src/TrackDLO"]
-	path = src/TrackDLO
-	url = git@github.com:RMDLO/TrackDLO.git
+[submodule "src/trackdlo"]
+	path = src/trackdlo
+	url = git@github.com:RMDLO/trackdlo.git
 [submodule "src/graph_rviz_plugin"]
 	path = src/graph_rviz_plugin
 	url = https://gitlab.com/InstitutMaupertuis/graph_rviz_plugin.git
