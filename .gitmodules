@@ -7,12 +7,12 @@
 [submodule "src/pyrosmsg"]
 	path = src/pyrosmsg
 	url = git@github.com:UM-ARM-Lab/pyrosmsg.git
-[submodule "src/geometric_shapes"]
-	path = src/geometric_shapes
-	url = git@github.com:ros-planning/geometric_shapes.git
 [submodule "src/trackdlo"]
 	path = src/trackdlo
 	url = git@github.com:RMDLO/trackdlo.git
 [submodule "src/graph_rviz_plugin"]
 	path = src/graph_rviz_plugin
-	url = https://gitlab.com/InstitutMaupertuis/graph_rviz_plugin.git
+	url = git@gitlab.com:InstitutMaupertuis/graph_rviz_plugin.git
+[submodule "src/geometric_shapes"]
+	path = src/geometric_shapes
+	url = git@github.com:ros-planning/geometric_shapes.git
