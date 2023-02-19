@@ -1,3 +1,6 @@
 __pycache__/
 .vscode/
+data/output/*.png
+data/output/*/*.json
+data/*.bag
 data/

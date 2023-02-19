@@ -12,6 +12,7 @@ from visualization_msgs.msg import MarkerArray
 import struct
 import cv2
 import numpy as np
+import sys
 
 import time
 import yaml
@@ -27,8 +28,7 @@ class TrackDLO:
     """
     Performs deformable linear object tracking with motion coherence
     """
-
-    def __init__(self):
+    def __init__(self, alg):
         self.proj_matrix = np.array([[918.359130859375, 0.0, 645.8908081054688, 0.0],
                                     [0.0, 916.265869140625, 354.02392578125, 0.0],
                                     [0.0, 0.0, 1.0, 0.0]])
@@ -45,14 +45,18 @@ class TrackDLO:
         self.pc_sub = message_filters.Subscriber('/camera/depth/color/points', PointCloud2)
         self.opencv_mask_sub = rospy.Subscriber('/mask_with_occlusion', Image, self.update_occlusion_mask)
 
-        self.pc_pub = rospy.Publisher ('/pts', PointCloud2, queue_size=10)
-        self.results_pub = rospy.Publisher ('/results', MarkerArray, queue_size=10)
-        self.track_pc_pub = rospy.Publisher('/results_pc', PointCloud2, queue_size=10)
-        self.guide_nodes_pub = rospy.Publisher ('/guide_nodes', MarkerArray, queue_size=10)
-        self.tracking_img_pub = rospy.Publisher ('/tracking_img', Image, queue_size=10)
-        self.mask_img_pub = rospy.Publisher('/mask', Image, queue_size=10)
+        self.queue_size = 100
+        self.algorithm=alg # 'trackdlo' or 'gltp'
+        self.pc_pub = rospy.Publisher ('/pts', PointCloud2, queue_size=self.queue_size)
+        self.trackdlo_markerarray_pub = rospy.Publisher ('/trackdlo_results_marker_array', MarkerArray, queue_size=self.queue_size)
+        self.trackdlo_pc_pub = rospy.Publisher('/trackdlo_results_pc', PointCloud2, queue_size=self.queue_size)
+        self.gltp_markerarray_pub = rospy.Publisher ('/gltp_results_marker_array', MarkerArray, queue_size=self.queue_size)
+        self.gltp_pc_pub = rospy.Publisher('/gltp_results_pc', PointCloud2, queue_size=self.queue_size)
+        self.guide_nodes_pub = rospy.Publisher ('/guide_nodes', MarkerArray, queue_size=self.queue_size)
+        self.tracking_img_pub = rospy.Publisher (f'/{self.algorithm}_tracking_img', Image, queue_size=self.queue_size)
+        self.mask_img_pub = rospy.Publisher('/mask', Image, queue_size=self.queue_size)
 
-        self.ts = message_filters.TimeSynchronizer([self.rgb_sub, self.pc_sub], 10)
+        self.ts = message_filters.TimeSynchronizer([self.rgb_sub, self.pc_sub], queue_size=self.queue_size)
         self.ts.registerCallback(self.callback)
 
     def callback(self, rgb, pc):
@@ -198,14 +202,20 @@ class TrackDLO:
 
             # log time
             cur_time = time.time()
-            guide_nodes, self.nodes, self.sigma2 = self.tracking_step(filtered_pc, self.nodes, self.sigma2, self.geodesic_coord, bmask_transformed, mask_dis_threshold)
+            if self.algorithm=='trackdlo':
+                guide_nodes, self.nodes, self.sigma2 = self.tracking_step(filtered_pc, self.nodes, self.sigma2, bmask_transformed, mask_dis_threshold)
+            if self.algorithm=='gltp':
+                guide_nodes, self.nodes, self.sigma2 = self.gltp_step(filtered_pc, self.nodes, self.sigma2, bmask_transformed, mask_dis_threshold)
             rospy.logwarn('tracking_step total: ' + str((time.time() - cur_time)*1000) + ' ms')
 
             self.init_nodes = self.nodes.copy()
 
             results = self.ndarray2MarkerArray(self.nodes, [255, 150, 0, 0.75], [0, 255, 0, 0.75], head)
             guide_nodes_results = self.ndarray2MarkerArray(guide_nodes, [0, 0, 0, 0.5], [0, 0, 1, 0.5], head)
-            self.results_pub.publish(results)
+            if self.algorithm == 'trackdlo':
+                self.trackdlo_markerarray_pub.publish(results)
+            if self.algorithm == 'gltp':
+                self.gltp_markerarray_pub.publish(results)
             self.guide_nodes_pub.publish(guide_nodes_results)
 
             if self.params["initialization_params"]["pub_tracking_image"]:
@@ -338,7 +348,11 @@ class TrackDLO:
                                                 names='x, y, z',
                                                 formats = 'float32, float32, float32')
         Y_msg = point_cloud2.array_to_pointcloud2(rec_project, head.stamp, frame_id='camera_color_optical_frame') # include time stamp matching other time
-        self.track_pc_pub.publish(Y_msg)
+        
+        if self.algorithm=='trackdlo':
+            self.trackdlo_pc_pub.publish(Y_msg)
+        if self.algorithm=='gltp':
+            self.gltp_pc_pub.publish(Y_msg)
         
         return results
 
@@ -741,7 +755,7 @@ class TrackDLO:
 
         return Y, self.sigma2
 
-    def tracking_step(self, X_orig, Y_0, sigma2_0, geodesic_coord, bmask_transformed, mask_dist_threshold):
+    def tracking_step(self, X_orig, Y_0, sigma2_0, bmask_transformed, mask_dist_threshold):
         # log time
         cur_time = time.time()
 
@@ -770,9 +784,37 @@ class TrackDLO:
 
         return correspondence_priors[:, 1:4], Y, self.sigma2
 
+    def gltp_step(self, X_orig, Y_0, sigma2_0, bmask_transformed, mask_dist_threshold):
+        # log time
+        cur_time = time.time()
+
+        # projection
+        nodes_h = np.hstack((Y_0, np.ones((len(Y_0), 1))))
+        image_coords = np.matmul(self.proj_matrix, nodes_h.T).T
+        us = (image_coords[:, 0] / image_coords[:, 2]).astype(int)
+        vs = (image_coords[:, 1] / image_coords[:, 2]).astype(int)
+
+        us = np.where(us >= 1280, 1279, us)
+        vs = np.where(vs >= 720, 719, vs)
+
+        uvs = np.vstack((vs, us)).T
+        uvs_t = tuple(map(tuple, uvs.T))
+        vis = bmask_transformed[uvs_t]
+        occluded_nodes = np.where(vis > mask_dist_threshold)[0]
+        visible_nodes = np.where(vis <= mask_dist_threshold)[0]
+
+        guide_nodes = Y_0[visible_nodes]
+        correspondence_priors = np.vstack((visible_nodes, guide_nodes.T)).T
+
+        Y, self.sigma2 = self.ecpd_lle(X_orig, Y_0, sigma2_0, 1, 1, 1, 0.05, 50, 0.00001, True, False, True, False)
+        
+        rospy.logwarn('tracking_step registration: ' + str((time.time() - cur_time)*1000) + ' ms')
+
+        return correspondence_priors[:, 1:4], Y, self.sigma2
+
 if __name__=='__main__':
     rospy.init_node('trackdlo')
-    t = TrackDLO()
+    t = TrackDLO(str(sys.argv[1]))
     try:
         rospy.spin()
     except KeyboardInterrupt:
