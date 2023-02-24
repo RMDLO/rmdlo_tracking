@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /Image1
       Splitter Ratio: 0.5
     Tree Height: 268
   - Class: rviz/Selection
@@ -84,7 +85,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.0020000000949949026
+      Size (m): 0.007000000216066837
       Style: Spheres
       Topic: /pts
       Unreliable: false
@@ -243,7 +244,7 @@ Visualization Manager:
       Value: false
   Enabled: true
   Global Options:
-    Background Color: 136; 138; 133
+    Background Color: 85; 87; 83
     Default Light: true
     Fixed Frame: base_link
     Frame Rate: 30
@@ -269,7 +270,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.729062020778656
+      Distance: 0.914535403251648
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -277,17 +278,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.4501248300075531
-        Y: -0.12447553873062134
-        Z: -0.011135928332805634
+        X: 0.49177086353302
+        Y: -0.018738387152552605
+        Z: -0.0052645024843513966
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6547946333885193
+      Pitch: 1.4247939586639404
       Target Frame: <Fixed Frame>
-      Yaw: 3.260396957397461
+      Yaw: 3.1253950595855713
     Saved: ~
 Window Geometry:
   Displays:

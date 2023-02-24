@@ -1,0 +1,26 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/opt/ros/noetic/include/**",
+        "/home/hollydinkel/.local/include/**",
+        "/home/hollydinkel/.local/include/**",
+        "/home/hollydinkel/rmdlo_tracking/src/arc_utilities/include/**",
+        "/home/hollydinkel/rmdlo_tracking/src/geometric_shapes/include/**",
+        "/home/hollydinkel/rmdlo_tracking/src/graph_rviz_plugin/include/**",
+        "/home/hollydinkel/rmdlo_tracking/src/pyrosmsg/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
