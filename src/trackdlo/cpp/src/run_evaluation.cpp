@@ -22,6 +22,7 @@ int pct_occlusion;
 double start_record_at;
 double exit_at;
 double wait_before_occlusion;
+double bag_rate;
 
 int callback_count = 0;
 evaluator tracking_evaluator;
@@ -39,7 +40,7 @@ void Callback(const sensor_msgs::ImageConstPtr& image_msg, const sensor_msgs::Po
     
     double time_from_start;
     time_from_start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - tracking_evaluator.start_time()).count();
-    time_from_start = time_from_start / 1000.0;
+    time_from_start = time_from_start / 1000.0 * tracking_evaluator.rate();
     std::cout << time_from_start << "; " << tracking_evaluator.exit_time() << std::endl;
     
     if (tracking_evaluator.exit_time() == -1) {
@@ -73,32 +74,32 @@ void Callback(const sensor_msgs::ImageConstPtr& image_msg, const sensor_msgs::Po
     pcl::fromPCLPointCloud2(*result_cloud, result_cloud_xyz);
     MatrixXf Y_track = result_cloud_xyz.getMatrixXfMap().topRows(3).transpose();
 
-    MatrixXf gt_nodes = tracking_evaluator.get_ground_truth_nodes(cur_image_orig, cloud_xyz);
-    MatrixXf Y_true = gt_nodes.replicate(1, 1);
-    // if not initialized
-    if (head_node(0, 0) == 0.0 && head_node(0, 1) == 0.0 && head_node(0, 2) == 0.0) {
-        // the one with greater x. this holds true for all 3 bag files
-        if (Y_track(0, 0) > Y_track(Y_track.rows()-1, 0)) {
-            head_node = Y_track.row(Y_track.rows()-1).replicate(1, 1);
-        }
-        else {
-            head_node = Y_track.row(0).replicate(1, 1);
-        }
-    }
-    Y_true = tracking_evaluator.sort_pts(gt_nodes, head_node);
-
-    // update head node
-    head_node = Y_true.row(0).replicate(1, 1);
-
-    std::cout << "Y_true size: " << Y_true.rows() << "; Y_track size: " << Y_track.rows() << std::endl;
-
     if (time_from_start > tracking_evaluator.recording_start_time()) {
+
+        MatrixXf gt_nodes = tracking_evaluator.get_ground_truth_nodes(cur_image_orig, cloud_xyz);
+        MatrixXf Y_true = gt_nodes.replicate(1, 1);
+        // if not initialized
+        if (head_node(0, 0) == 0.0 && head_node(0, 1) == 0.0 && head_node(0, 2) == 0.0) {
+            // the one with greater x. this holds true for all 3 bag files
+            if (Y_track(0, 0) > Y_track(Y_track.rows()-1, 0)) {
+                head_node = Y_track.row(Y_track.rows()-1).replicate(1, 1);
+            }
+            else {
+                head_node = Y_track.row(0).replicate(1, 1);
+            }
+        }
+        Y_true = tracking_evaluator.sort_pts(gt_nodes, head_node);
+
+        // update head node
+        head_node = Y_true.row(0).replicate(1, 1);
+
+        std::cout << "Y_true size: " << Y_true.rows() << "; Y_track size: " << Y_track.rows() << std::endl;
 
         if (time_from_start > tracking_evaluator.recording_start_time() + tracking_evaluator.wait_before_occlusion()) {
             if (bag_file == 0) {
                 // simulate occlusion: occlude the first n nodes
                 // strategy: first calculate the 3D boundary box based on point cloud, then project the four corners back to the image
-                int num_of_occluded_nodes = static_cast<int>(Y_track.rows() * (tracking_evaluator.pct_occlusion()/100));
+                int num_of_occluded_nodes = static_cast<int>(Y_track.rows() * tracking_evaluator.pct_occlusion() / 100.0);
 
                 if (num_of_occluded_nodes != 0) {
 
@@ -223,6 +224,16 @@ void Callback(const sensor_msgs::ImageConstPtr& image_msg, const sensor_msgs::Po
                 corners_arr.data = {840, 408, 1191, 678};
                 corners_arr_pub.publish(corners_arr);
             }
+
+            else if (bag_file == 2) {
+                std_msgs::Int32MultiArray corners_arr;
+                corners_arr.data = {681, 12, 1012, 320};
+                corners_arr_pub.publish(corners_arr);
+            }
+
+            else {
+                throw std::invalid_argument("Invalid bag file ID!");
+            }
         }
 
         // compute error
@@ -249,6 +260,7 @@ int main(int argc, char **argv) {
     nh.getParam("/evaluation/start_record_at", start_record_at);
     nh.getParam("/evaluation/exit_at", exit_at);
     nh.getParam("/evaluation/wait_before_occlusion", wait_before_occlusion);
+    nh.getParam("/evaluation/bag_rate", bag_rate);
 
     // get bag file length
     std::vector<std::string> topics;
@@ -282,7 +294,7 @@ int main(int argc, char **argv) {
     std::cout << "num of point cloud messages: " << pc_count << std::endl;
 
     // initialize evaluator
-    tracking_evaluator = evaluator(rgb_count, trial, pct_occlusion, alg, bag_file, save_location, start_record_at, exit_at, wait_before_occlusion);
+    tracking_evaluator = evaluator(rgb_count, trial, pct_occlusion, alg, bag_file, save_location, start_record_at, exit_at, wait_before_occlusion, bag_rate);
 
     image_transport::ImageTransport it(nh);
     corners_arr_pub = nh.advertise<std_msgs::Int32MultiArray>("/corners", 10);
