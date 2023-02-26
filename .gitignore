@@ -8,3 +8,4 @@ devel/
 *.bag
 tracking_ros/
 *.pyc
+.vscode/

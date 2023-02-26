@@ -14,7 +14,7 @@ using cv::Mat;
 
 evaluator::evaluator () {}
 evaluator::evaluator (int length, int trial, int pct_occlusion, std::string alg, int bag_file, std::string save_location, 
-                      double start_record_at, double exit_at, double wait_before_occlusion, double bag_rate) 
+                      double start_record_at, double exit_at, double wait_before_occlusion, double bag_rate, int num_of_nodes) 
 {
     length_ = length;
     trial_ = trial;
@@ -27,6 +27,16 @@ evaluator::evaluator (int length, int trial, int pct_occlusion, std::string alg,
     wait_before_occlusion_ = wait_before_occlusion;
     cleared_file_ = false;
     bag_rate_ = bag_rate;
+    num_of_nodes_ = num_of_nodes;
+    image_counter_ = 0;
+}
+
+int evaluator::image_counter () {
+    return image_counter_;
+}
+
+void evaluator::increment_image_counter () {
+    image_counter_ += 1;
 }
 
 void evaluator::set_start_time (std::chrono::steady_clock::time_point cur_time) {
@@ -268,7 +278,7 @@ double evaluator::get_piecewise_error (MatrixXf Y_track, MatrixXf Y_true) {
         closest_pts_on_Y_true.push_back(closest_pt);
     }
 
-    double error_frame = total_distances_to_curve / Y_track.rows();
+    double error_frame = total_distances_to_curve / num_of_nodes_;
 
     return error_frame;
 }
@@ -298,7 +308,7 @@ double evaluator::compute_and_save_error (MatrixXf Y_track, MatrixXf Y_true) {
 
     double time_diff;
     time_diff = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time_).count();
-    time_diff = time_diff / 1000.0;
+    time_diff = time_diff / 1000.0 * bag_rate_;
 
     if (cleared_file_ = false) {
         std::ofstream error_list (dir);
@@ -312,5 +322,15 @@ double evaluator::compute_and_save_error (MatrixXf Y_track, MatrixXf Y_true) {
         error_list.close();
     }
 
+    return cur_frame_error;
+}
+
+double evaluator::compute_error (MatrixXf Y_track, MatrixXf Y_true) {
+    // compute error
+    double E1 = get_piecewise_error(Y_track, Y_true);
+    double E2 = get_piecewise_error(Y_true, Y_track);
+
+    double cur_frame_error = (E1 + E2) / 2;
+    
     return cur_frame_error;
 }
